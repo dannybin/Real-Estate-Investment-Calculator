@@ -1,0 +1,57 @@
+
+
+h1{
+  text-align: center;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.navbar {
+-webkit-border-radius: 0;
+-moz-border-radius: 0;
+border-radius: 0;
+}
+
+.btn-tag{
+  margin-top:5px;
+  width: 80px;
+}
+
+.header-link{
+  margin-top: 10px;
+  font-size: 20px;
+  color: white;
+}
+
+.hide-table {
+	display: none;
+}
+
+.show-table {
+	display: inline;
+}
+
+.cashflow{
+	font-size: 14px;
+	font-weight: 100;
+}
+
+.financials{
+	font-size: 14px;
+	font-weight: 100;
+}
+
+.bullet { font: 10px sans-serif; }
+.bullet .marker { stroke: #000; stroke-width: 2px; }
+.bullet .tick line { stroke: #666; stroke-width: .5px; }
+.bullet .range.s0 { fill: #eee; }
+.bullet .range.s1 { fill: #ddd; }
+.bullet .range.s2 { fill: #ccc; }
+.bullet .measure.s0 { fill: lightsteelblue; }
+.bullet .measure.s1 { fill: steelblue; }
+.bullet .title { font-size: 14px; font-weight: bold; }
+.bullet .subtitle { fill: #999; }
+
+

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+    <title>Real Estate Investment Calculator</title>
+    
+    <link href="stylesheets/style.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.min.css">
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="javascripts/bootstrap.min.js"></script>
+    <script src="javascripts/jquery-2.0.3.min.js"></script>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="javascripts/bullet.js"></script>
+</head>
+ 
+<body>
+
+<div class="navbar navbar-inverse" style="background-color: #f0f8ff" role="navigation">
+    <div class="container-fluid">
+      <!-- Logo -->
+
+        <a class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <a class="navbar-brand navbar-left" style="color:#00B7FF" href="#" name="top">Danny's Real Estate Investment Calculator!</a>
+
+
+      <!-- Right hand nav bar options -->
+
+        <div class="collapse navbar-collapse">
+          <div class="nav navbar-nav navbar-right">
+            <div class="header-link"><a href='/tagged'>Boo!</a></div>
+          </div>
+        </div>
+    </div>
+  </div>
+  <h1>To Buy or Not To Buy</h1><br>
+  <div class="container-fluid">
+    <div class="col-md-10 col-md-offset-1">
+    
+      <form action="/", method="post">
+        <div class="col-md-6 basic-info">
+          <b>Basic Information: </b><br>
+          <tr>
+            <div class="col-md-6">
+              Mortgage Rate (APR) %
+              <input type="number", min="0", max="100", name="Rate", class="form-control required", placeholder="4.25">
+            </div>
+            <div class="col-md-6">
+              Purchasing Price
+              <input type="Number", name="PurchasePrice", min="10000", class="form-control required", placeholder="800000">
+            </div>
+          </tr>
+          <tr>
+            <div class="col-md-6">
+              Down Payment %
+              <input type="Number", min="0", max="100", name="DownPay", class="form-control", placeholder="20">
+            </div>
+            <div class="col-md-6">
+              Monthly Property Tax/HOA Fees
+              <input type="Number", name="HOA", class="form-control",  placeholder="2000">
+            </div>
+          </tr>
+
+          <tr>
+            <div class="col-md-6">
+              Income Tax
+              <input type="number", min="0", max="100",  name="TaxRate", class="form-control", placeholder="35">
+            </div>
+            <div class="col-md-6">
+              Property Tax/HOA Deductibility
+              <input type="Number", min="0", max="100", name="TaxDeduct", class="form-control", value="100">
+            </div>
+          </tr>
+          
+        </div>
+
+        <div class="col-md-6 investment-info">
+          <b>Investment Analysis: </b><br>
+          <tr>
+            <div class="col-md-6">
+              Property Rennovation Cost
+              <input type="Number", name="TLC", class="form-control", placeholder="80000">
+            </div>
+            <div class="col-md-6">
+              Property Closing Cost
+              <input type="Number", name="Closing", class="form-control", placeholder="5000">
+            </div>
+          </tr>
+          <tr>
+            <div class="col-md-6">
+              Estimated Selling Price
+              <input type="Number", name="SoldPrice",  min="10000", class="form-control", placeholder="1000000">
+            </div>
+            <div class="col-md-6">
+              Sales Commission %
+              <input type="Number", name="Commission",  min="0", max="20", class="form-control", placeholder="6">
+            </div>
+          </tr>
+          <tr>
+            <div class="col-md-6">
+              Annual RRR %
+              <input type="Number", name="RRR",  min="0", max="100", class="form-control", placeholder="4">
+            </div>
+            <div class="col-md-6">
+              Possession Time In Years
+              <input type="Number", name="Year",  min="0", max="100", class="form-control", value="1">
+            </div>
+
+          </tr>
+          <tr>    
+            <div class="col-md-12">     
+              Monthly Rental Income $
+              <input type="Number", name="RentalIncome",  min="0", max="10000", class="form-control", placeholder="2000">
+            </div>
+          </tr>
+
+        </div>
+
+        <button type="submit", name="submit", class="btn btn-md btn-success btn-tag" style ="width: 50%", value="submit">Calculate!</button>
+      </form>
+
+      <br>
+      <div class="col-md-6 {{status}}"><b>
+        Down Payment: ${{DownPayment}}<br>
+        Loan Amount: ${{Loan}}</b>
+      </div>
+      <div class="col-md-6 {{status}}"><b>
+        Total Contribution(with Tax Savings): ${{TotalContributionWithTaxSaving}}<br>
+        Principal Remaining: ${{PrincipalRemaining}}</b>
+      </div>
+
+      <hr>
+
+
+
+      <div class="col-md-6 cashflow {{status}}">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Monthly</th>
+              <th>Annual</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th style="font-weight: 300">PT/HOA Fee</th>
+              <th style="font-weight: 300">${{HOA}}</th>
+              <th style="font-weight: 300">${{AnnualHOA}}</th>
+            </tr>
+            <tr>
+              <th style="font-weight: 300">Mortgage Expense</th>
+              <th style="font-weight: 300">${{MonthlyMortgage}}</th>
+              <th style="font-weight: 300">${{AnnualMortgage}}</th>
+            </tr>
+            <tr>
+              <th style="font-weight: 300; text-indent: 10px;">Interest Paid</th>
+              <th style="font-weight: 300">${{MonthlyInterest}}</th>
+              <th style="font-weight: 300">${{AnnualInterest}}</th>
+            </tr>
+            <tr>
+              <th style="font-weight: 300; text-indent: 10px;">Principal Paid</th>
+              <th style="font-weight: 300">${{MonthlyPrincipal}}</th>
+              <th style="font-weight: 300">${{AnnualPrincipal}}</th>
+            </tr>
+            <tr>
+              <th>Total Property Expense</th>
+              <th>${{MonthlyExpense}}</th>
+              <th>${{AnnualExpense}}</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th style="font-weight: 300">Tax Saving</th>
+              <th style="font-weight: 300">${{MonthlyTaxSaving}}</th>
+              <th style="font-weight: 300">${{AnnualTaxSaving}}</th>
+            </tr>
+            <tr>
+              <th>Net Monthly Expense</th>
+              <th>${{MonthlyNetExpense}}</th>
+              <th>${{AnnualNetExpense}}</th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-md-6 financials {{status}}">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th style="font-weight: 300">Total Principal Paid</th>
+              <th style="font-weight: 300">${{PrincipalPaid}}</th>
+
+            </tr>
+            <tr>
+              <th style="font-weight: 300">Total Interest Paid</th>
+              <th style="font-weight: 300">${{InterestPaid}}</th>
+            </tr>
+            <tr>
+              <th style="font-weight: 300">Total PT/HOA Paid</th>
+              <th style="font-weight: 300">${{HOAPaid}}</th>
+            </tr>
+            <tr>
+              <th style="font-weight: 300">Property Operating Expense</th>
+              <th style="font-weight: 300">${{PropertyOperatingExp}}</th>
+            </tr>
+            <tr>
+              <th style="font-weight: 300">Property Operating Exp With Tax Savings</th>
+              <th style="font-weight: 300">${{PropertyOperatingExpWithTax}}</th>
+            </tr>
+            <tr>
+              <th style="font-weight: 300">Net Operating Exp With Rental Income</th>
+              <th style="font-weight: 300">${{NetOperatingWithRent}}</th>
+            </tr>
+            <tr>
+              <th>Total Property Expense</th>
+              <th>${{TotalExpenseWithRent}}</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>Net Profit</th>
+              <th>${{NetProfit}}</th>
+            </tr>
+            <tr>
+              <th style="font-weight: 300">Annual Rate of Return</th>
+              <th style="font-weight: 300">{{AnnualReturn}}%</th>
+            </tr>
+            <tr>
+              <th>Annual Effective Return</th>
+              <th>{{EffectiveReturn}}%</th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<button>visualize</button>
+
+        <script>
+
+var margin = {top: 5, right: 40, bottom: 20, left: 120},
+    width = 960 - margin.left - margin.right,
+    height = 50 - margin.top - margin.bottom;
+
+var chart = d3.bullet()
+    .width(width)
+    .height(height);
+
+d3.json("bullets.json", function(error, data) {
+  if (error) throw error;
+
+  var svg = d3.select("body").selectAll("svg")
+      .data(data)
+    .enter().append("svg")
+      .attr("class", "bullet")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .call(chart);
+
+  var title = svg.append("g")
+      .style("text-anchor", "end")
+      .attr("transform", "translate(-6," + height / 2 + ")");
+
+  title.append("text")
+      .attr("class", "title")
+      .text(function(d) { return d.title; });
+
+  title.append("text")
+      .attr("class", "subtitle")
+      .attr("dy", "1em")
+      .text(function(d) { return d.subtitle; });
+
+  d3.selectAll("button").on("click", function() {
+    svg.datum(randomize).call(chart.duration(1000)); // TODO automatic transition
+  });
+});
+
+function randomize(d) {
+  if (!d.randomizer) d.randomizer = randomizer(d);
+  d.ranges = d.ranges.map(d.randomizer);
+  d.markers = d.markers.map(d.randomizer);
+  d.measures = d.measures.map(d.randomizer);
+  return d;
+}
+
+function randomizer(d) {
+  var k = d3.max(d.ranges) * .2;
+  return function(d) {
+    return Math.max(0, d + k * (Math.random() - .5));
+  };
+}
+
+</script>
+
+</body>
+</html>
