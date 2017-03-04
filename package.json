@@ -9,7 +9,6 @@
     "express": "3.5.1",
     "format-currency": "^1.0.0",
     "hbs": "*",
-    "jade": "*",
-    "rethinkdb": "*"
+    "jade": "*"
   }
 }

@@ -47,32 +47,32 @@
           <tr>
             <div class="col-md-6">
               Mortgage Rate (APR) %
-              <input type="number", min="0", max="100", name="Rate", class="form-control required", placeholder="4.25">
+              <input type="number", min="0", max="100", name="Rate", class="form-control required", value="{{Rate}}", placeholder="4">
             </div>
             <div class="col-md-6">
               Purchasing Price
-              <input type="Number", name="PurchasePrice", min="10000", class="form-control required", placeholder="800000">
+              <input type="Number", name="PurchasePrice", min="10000", class="form-control required", value="{{PurchasePrice}}", placeholder="800000">
             </div>
           </tr>
           <tr>
             <div class="col-md-6">
               Down Payment %
-              <input type="Number", min="0", max="100", name="DownPay", class="form-control", placeholder="20">
+              <input type="Number", min="0", max="100", name="DownPay", class="form-control", value="{{DownPay}}", placeholder="20">
             </div>
             <div class="col-md-6">
               Monthly Property Tax/HOA Fees
-              <input type="Number", name="HOA", class="form-control",  placeholder="2000">
+              <input type="Number", name="HOA", class="form-control", value="{{HOA}}",  placeholder="2000">
             </div>
           </tr>
 
           <tr>
             <div class="col-md-6">
               Income Tax
-              <input type="number", min="0", max="100",  name="TaxRate", class="form-control", placeholder="35">
+              <input type="number", min="0", max="100",  name="TaxRate", class="form-control", value="{{TaxRate}}", placeholder="35">
             </div>
             <div class="col-md-6">
               Property Tax/HOA Deductibility
-              <input type="Number", min="0", max="100", name="TaxDeduct", class="form-control", value="100">
+              <input type="Number", min="0", max="100", name="TaxDeduct", class="form-control", value="{{TaxDeduct}}">
             </div>
           </tr>
           
@@ -83,38 +83,38 @@
           <tr>
             <div class="col-md-6">
               Property Rennovation Cost
-              <input type="Number", name="TLC", class="form-control", placeholder="80000">
+              <input type="Number", name="TLC", class="form-control", value="{{TLC}}", placeholder="80000">
             </div>
             <div class="col-md-6">
               Property Closing Cost
-              <input type="Number", name="Closing", class="form-control", placeholder="5000">
+              <input type="Number", name="Closing", class="form-control", value="{{Closing}}", placeholder="5000">
             </div>
           </tr>
           <tr>
             <div class="col-md-6">
               Estimated Selling Price
-              <input type="Number", name="SoldPrice",  min="10000", class="form-control", placeholder="1000000">
+              <input type="Number", name="SoldPrice",  min="10000", class="form-control", value="{{SoldPrice}}", placeholder="1000000">
             </div>
             <div class="col-md-6">
               Sales Commission %
-              <input type="Number", name="Commission",  min="0", max="20", class="form-control", placeholder="6">
+              <input type="Number", name="Commission",  min="0", max="20", class="form-control", value="{{Commission}}", placeholder="6">
             </div>
           </tr>
           <tr>
             <div class="col-md-6">
               Annual RRR %
-              <input type="Number", name="RRR",  min="0", max="100", class="form-control", placeholder="4">
+              <input type="Number", name="RRR",  min="0", max="100", class="form-control", value="{{RRR}}", placeholder="4">
             </div>
             <div class="col-md-6">
               Possession Time In Years
-              <input type="Number", name="Year",  min="0", max="100", class="form-control", value="1">
+              <input type="Number", name="Year",  min="0", max="100", class="form-control", value="{{Year}}">
             </div>
 
           </tr>
           <tr>    
             <div class="col-md-12">     
               Monthly Rental Income $
-              <input type="Number", name="RentalIncome",  min="0", max="10000", class="form-control", placeholder="2000">
+              <input type="Number", name="RentalIncome",  min="0", max="10000", class="form-control", value="{{Rental}}", placeholder="2000">
             </div>
           </tr>
 
@@ -251,9 +251,11 @@
       </div>
     </div>
   </div>
+
+<!--
 <button>visualize</button>
 
-        <script>
+<script>
 
 var margin = {top: 5, right: 40, bottom: 20, left: 120},
     width = 960 - margin.left - margin.right,
@@ -309,7 +311,7 @@ function randomizer(d) {
   };
 }
 
-</script>
+</script>-->
 
 </body>
 </html>

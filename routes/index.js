@@ -6,7 +6,9 @@ var accounting = require("accounting");
 
 exports.index = function(req, res){
 
-  res.render('index', {status : "hide-table"});
+  res.render('index', {status : "hide-table",
+                       TaxDeduct : "100",
+                       Year : "1"});
 };
 
 
@@ -28,10 +30,10 @@ exports.calculate = function(req, res){
   var Commission = req.body.Commission/100;
   var RentalIncome = req.body.RentalIncome/1.0;
   var CapitalGainTax = 0.25;
+
   var DownPayment = DownPay * PurchasePrice;
   var Loan = PurchasePrice - DownPayment;
   var AnnualHOA = HOA*12;
-  
   var MonthlyMortgage = Loan/((1-Math.pow((1+Rate/12),-360))/(Rate/12));
   var AnnualMortgage = MonthlyMortgage * 12;
   var AnnualInterest = AnnualMortgage - (MonthlyMortgage*((1-Math.pow((1+Rate/12),(-360+(Year-1)*12)))/(Rate/12))
@@ -62,9 +64,20 @@ exports.calculate = function(req, res){
 
   var Test = MonthlyMortgage*1.0 + HOA*1.0;
   res.render('index', {DownPayment : accounting.formatNumber(DownPayment,0,","),
-                       Rate : Rate,
-                       Loan : accounting.formatNumber(Loan,0,","),
+                       Rate : Rate*100,
+                       TaxRate : TaxRate*100,
+                       TaxDeduct : TaxDeduct*100,
+                       PurchasePrice : PurchasePrice,
+                       DownPay : DownPay*100,
+                       SoldPrice : SoldPrice,
+                       Closing : Closing,
+                       TLC : TLC,
+                       Commission : Commission*100,
+                       RRR : RRR*100,
+                       Year : Year,
+                       RentalIncome : RentalIncome,
                        HOA : HOA,
+                       Loan : accounting.formatNumber(Loan,0,","),
                        status : "show-table",
                        AnnualHOA : accounting.formatNumber(AnnualHOA,0,","),
                        MonthlyMortgage : accounting.formatNumber(MonthlyMortgage,0,","),
