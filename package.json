@@ -6,6 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "async": "^2.1.5",
     "express": "3.5.1",
     "format-currency": "^1.0.0",
     "hbs": "*",

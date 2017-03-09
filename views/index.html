@@ -3,14 +3,16 @@
 <html>
 <head>
     <title>Real Estate Investment Calculator</title>
-    
-    <link href="stylesheets/style.css" rel="stylesheet" type="text/css">
+
     <link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <link href="stylesheets/style.css" rel="stylesheet" type="text/css">
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="javascripts/bootstrap.min.js"></script>
     <script src="javascripts/jquery-2.0.3.min.js"></script>
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script src="javascripts/bullet.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
  
 <body>
@@ -28,19 +30,46 @@
         <a class="navbar-brand navbar-left" style="color:#00B7FF" href="#" name="top">Danny's Real Estate Investment Calculator!</a>
 
 
-      <!-- Right hand nav bar options -->
+      <!-- Right hand nav bar options
 
         <div class="collapse navbar-collapse">
           <div class="nav navbar-nav navbar-right">
             <div class="header-link"><a href='/tagged'>Boo!</a></div>
           </div>
-        </div>
+        </div> -->
     </div>
   </div>
   <h1>To Buy or Not To Buy</h1><br>
   <div class="container-fluid">
     <div class="col-md-10 col-md-offset-1">
-    
+    <!-- Popup to get property address -->
+      <div data-role="main" class="ui-content {{PropertyInput}}">
+        <a href="#myPopup" data-rel="popup" class="ui-btn ui-corner-all">Fetch Property Detail</a>
+        <div data-role="popup" id="myPopup" class="ui-content">
+          <form method="post" action="/fetch">
+            <div>
+              <h3>Enter Property Address</h3>
+              <div class="col-md-12">
+                <input type="text" name="Address"  placeholder="Address">
+              </div>
+              <div class="col-md-4">
+                <input type="text" name="City" placeholder="City">
+              </div>
+              <div class="col-md-4">
+                <input type="text" name="State" placeholder="State">
+              </div>
+              <div class="col-md-4">
+                <input type="text" name="Zip"  placeholder="Zip">
+              </div>
+                <input type="submit"  value="Fetch Data">
+            </div>
+          </form>
+        </div>
+      </div>
+      <div data-role="main" class="ui-content {{PropertyReset}}">
+        <a href="/" class="ui-btn ui-corner-all">Reset</a>
+      </div>
+      <!-- Get basic data from user -->
       <form action="/", method="post">
         <div class="col-md-6 basic-info">
           <b>Basic Information: </b><br>
@@ -75,9 +104,38 @@
               <input type="Number", min="0", max="100", name="TaxDeduct", class="form-control", value="{{TaxDeduct}}">
             </div>
           </tr>
-          
+          <tr>
+            <div class="col-md-12 error {{Error}}">
+              {{ErrorMessage}}
+            </div>
+          </tr>
+          <tr>
+            <div class="col-md-12 {{ShowPropertyData}}">
+              Bedrooms: <b>{{Bedrooms}}</b> &nbsp;&nbsp;&nbsp; Bathrooms: <b>{{Bathrooms}}</b>  &nbsp;&nbsp;&nbsp; Living Space: <b>{{PropertySize}}</b>sqft
+            </div>
+          </tr>
+          <br>
+          <tr>
+            <div class="col-md-12 {{ShowPropertyData}}">
+              Lot Size: <b>{{LotSize}}</b>sqft &nbsp;&nbsp;&nbsp; Year Built: <b>{{YearBuilt}}</b> &nbsp;&nbsp;&nbsp; Estimated Market Value: <b>${{Zestimate}}</b>
+            </div>
+          </tr>
+
+          <!-- Pass all the property into to calculation function -->
+          <input type="hidden", name="ShowPropertyData", value = "{{ShowPropertyData}}">
+          <input type="hidden", name="Bedrooms", value = "{{Bedrooms}}">
+          <input type="hidden", name="Bathrooms", value = "{{Bathrooms}}">
+          <input type="hidden", name="PropertySize", value = "{{PropertySize}}">
+          <input type="hidden", name="LotSize", value = "{{LotSize}}">
+          <input type="hidden", name="YearBuilt", value = "{{YearBuilt}}">
+          <input type="hidden", name="Zestimate", value = "{{Zestimate}}">
+          <input type="hidden", name="PropertyReset", value = "{{PropertyReset}}">
+          <input type="hidden", name="PropertyInput", value = "{{PropertyInput}}">
+          <input type="hidden", name="MakeADeal", value = "{{MakeADeal}}">
+          <input type="hidden", name="BeCareful", value = "{{BeCareful}}">
         </div>
 
+        <!-- Get financial data from user -->
         <div class="col-md-6 investment-info">
           <b>Investment Analysis: </b><br>
           <tr>
@@ -117,27 +175,27 @@
               <input type="Number", name="RentalIncome",  min="0", max="10000", class="form-control", value="{{Rental}}", placeholder="2000">
             </div>
           </tr>
-
         </div>
 
-        <button type="submit", name="submit", class="btn btn-md btn-success btn-tag" style ="width: 50%", value="submit">Calculate!</button>
+        <!-- calculate -->
+        <button type="submit", name="submit", class="btn btn-md btn-success btn-tag" style ="width: 50%;", value="submit">Calculate!</button>
+        
       </form>
 
       <br>
-      <div class="col-md-6 {{status}}"><b>
+      <div class="col-md-6 {{Status}}"><b>
         Down Payment: ${{DownPayment}}<br>
         Loan Amount: ${{Loan}}</b>
       </div>
-      <div class="col-md-6 {{status}}"><b>
+      <div class="col-md-6 {{Status}}"><b>
         Total Contribution(with Tax Savings): ${{TotalContributionWithTaxSaving}}<br>
         Principal Remaining: ${{PrincipalRemaining}}</b>
       </div>
-
       <hr>
 
 
 
-      <div class="col-md-6 cashflow {{status}}">
+      <div class="col-md-6 cashflow {{Status}}">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -191,7 +249,7 @@
         </table>
       </div>
 
-      <div class="col-md-6 financials {{status}}">
+      <div class="col-md-6 financials {{Status}}">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -244,10 +302,14 @@
             </tr>
             <tr>
               <th>Annual Effective Return</th>
-              <th>{{EffectiveReturn}}%</th>
+              <th class="{{ReturnStyle}}">{{EffectiveReturn}}%</th>
             </tr>
           </tbody>
         </table>
+      </div>
+      <div class="col-md-12">
+        <h3 class="good {{MakeADeal}}">Seems Like a good deal!  Let's look into it.  Email me at bin.danny@gmail.com</h3>
+        <h3 class="bad {{BeCareful}}">Not the best deal out there.  Keep looking.</h3>
       </div>
     </div>
   </div>

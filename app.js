@@ -43,6 +43,7 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.post('/', routes.calculate);
+app.post('/fetch', routes.fetch);
 
 
 http.createServer(app).listen(app.get('port'), function(){

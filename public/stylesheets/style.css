@@ -25,6 +25,14 @@ border-radius: 0;
   color: white;
 }
 
+.basic-info {
+  font-size: 14px;
+}
+
+.investment-info {
+  font-size: 14px;
+}
+
 .hide-table {
 	display: none;
 }
@@ -43,6 +51,17 @@ border-radius: 0;
 	font-weight: 100;
 }
 
+.good{
+  color: green;
+}
+
+.bad{
+  color: red;
+}
+
+.error{
+  color: red;
+}
 .bullet { font: 10px sans-serif; }
 .bullet .marker { stroke: #000; stroke-width: 2px; }
 .bullet .tick line { stroke: #666; stroke-width: .5px; }

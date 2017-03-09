@@ -2,19 +2,185 @@
 var assert = require('assert'),
     self = this;
 var accounting = require("accounting");
+const https = require('https');
+var parseString = require('xml2js').parseString;
+var async = require("async");
+var xpath = require('xpath');
+var dom = require('xmldom').DOMParser;
 
 
 exports.index = function(req, res){
 
-  res.render('index', {status : "hide-table",
+  res.render('index', {Status : "hide-table",
+                       ShowPropertyData : "hide",
+                       Error : "hide",
                        TaxDeduct : "100",
-                       Year : "1"});
+                       Year : "1",
+                       PropertyReset : "hide",
+                       PropertyInput : "show",
+                       MakeADeal : "hide",
+                       BeCareful : "hide",
+                     });
+};
+
+exports.fetch = function(req, res){
+  var address = encodeURI(req.body.Address);
+  var city = encodeURI(req.body.City);
+  var state = encodeURI(req.body.State);
+  var zip = req.body.Zip;
+  var baseSearchURL = "https://www.zillow.com/webservice/GetDeepSearchResults.htm?zws-id=X1-ZWz19qpbqq1ibv_5cfwc&";
+  var searchURL = baseSearchURL+"address="+address+"&citystatezip="+city+"+"+state+"+"+zip;
+  var httpsData, result, Address, Zpid, YearBuilt, LotSize, PropertySize, Bedrooms, Bathrooms, 
+      LastSoldDate, LastSoldPrice, Zestimate, LowZestimate, HighZestimate, PropertyData, AskingPrice, MLS, 
+      Listing, PropertyStatus;
+
+
+  async.series([
+    function (callback){
+       https.get(searchURL, function(res){
+          res.setEncoding('utf8');
+          result = res;
+          callback();
+       });
+    },
+    function (getData){
+      console.log('STATUS: ' + result.statusCode);
+
+      result.on('data', function(data){
+        httpsData += data;
+      });
+
+      result.on('end', function(){
+        result.destroy();
+        getData();
+      });
+    
+    },
+    function (getDetail){
+      var xml = new dom().parseFromString(httpsData);
+      var StatusCode = xpath.select("//code", xml)[0].firstChild.data;
+      //Check to make sure we have successfully extracted data
+      if(StatusCode != 0)
+      {
+        return getDetail("No property data");
+      }
+      Address = xpath.select("//address", xml)[0].firstChild.data;
+      Zpid = xpath.select("//zpid", xml)[0].firstChild.data;;
+      YearBuilt = xpath.select("//yearBuilt", xml)[0].firstChild.data;
+      LotSize = xpath.select("//lotSizeSqFt", xml)[0].firstChild.data;
+      PropertySize = xpath.select("//finishedSqFt", xml)[0].firstChild.data;
+      Bedrooms = xpath.select("//bedrooms", xml)[0].firstChild.data;
+      Bathrooms = xpath.select("//bathrooms", xml)[0].firstChild.data;
+      LastSoldDate = xpath.select("//lastSoldDate", xml)[0].firstChild.data;
+      LastSoldPrice = xpath.select("//lastSoldPrice", xml)[0].firstChild.data;
+      Zestimate = xpath.select("//amount", xml)[0].firstChild.data;
+      LowZestimate = xpath.select("//low", xml)[0].firstChild.data;
+      HighZestimate = xpath.select("//high", xml)[0].firstChild.data;
+
+      getDetail();
+    },
+    function (propertyDetail){
+      console.log(Zpid);
+      var detailURL = "https://www.zillow.com/webservice/GetUpdatedPropertyDetails.htm?zws-id=X1-ZWz19qpbqq1ibv_5cfwc&zpid="+Zpid;
+      https.get(detailURL, function(res){
+        res.setEncoding('utf8');
+        res.on('data', function(data){
+          PropertyData += data;
+        });
+
+        res.on('end', function(){
+          console.log(PropertyData);
+          res.destroy();
+          propertyDetail();
+        });
+
+      });
+
+    },
+    function(done){
+      var xml = new dom().parseFromString(PropertyData);
+
+      var StatusCode = xpath.select("//code", xml)[0].firstChild.data;
+      console.log(StatusCode);
+      //Check to make sure we have successfully extracted data
+      if(StatusCode != 0)
+      { 
+        return done("No property listing");
+      }
+
+      Listing =  xpath.select("//posting", xml);
+
+      if(Listing.length == 0)
+      {
+        return done("No property listing");
+      }
+
+      AskingPrice =  xpath.select("//price", xml)[0].firstChild.data;;
+      PropertyStatus =  xpath.select("//status", xml)[0].firstChild.data;
+      MLS =  xpath.select("//mls", xml)[0].firstChild.data;
+
+      console.log(AskingPrice);
+      console.log(PropertyStatus);
+      console.log(MLS);
+
+      done();
+    }
+  ], function (err){
+
+      console.log(err);
+      if(err == "No property data"){
+        res.render('index', {Status : "hide-table",
+                            ShowPropertyData : "hide",
+                            Error : "show",
+                            ErrorMessage : "No Property Data",
+                            TaxDeduct : "100",
+                            Year : "1",
+                            PropertyReset : "show",
+                            PropertyInput : "hide"
+                          });
+      }
+      else if(err == "No property listing"){
+        res.render('index', {Status : "hide-table",
+                            ShowPropertyData : "show",
+                            Error : "hide",
+                            ErrorMessage : "",
+                            Bedrooms : Bedrooms,
+                            Bathrooms : Bathrooms,
+                            PropertySize : accounting.formatNumber(PropertySize,0,","),
+                            LotSize : accounting.formatNumber(LotSize,0,","),
+                            YearBuilt : YearBuilt,
+                            Zestimate : accounting.formatNumber(Zestimate,0,","),
+                            TaxDeduct : "100",
+                            Year : "1",
+                            PropertyReset : "show",
+                            PropertyInput : "hide"
+                          });
+      }
+      else{
+        res.render('index', {Status : "hide-table",
+                            ShowPropertyData : "show",
+                            Error : "hide",
+                            ErrorMessage : "",
+                            Bedrooms : Bedrooms,
+                            Bathrooms : Bathrooms,
+                            PropertySize : accounting.formatNumber(PropertySize,0,","),
+                            LotSize : accounting.formatNumber(LotSize,0,","),
+                            YearBuilt : YearBuilt,
+                            Zestimate : accounting.formatNumber(Zestimate,0,","),
+                            PurchasePrice : AskingPrice,
+                            PropertyStatus : PropertyStatus,
+                            TaxDeduct : "100",
+                            Year : "1",
+                            PropertyReset : "show",
+                            PropertyInput : "hide"
+                          });
+      }
+  }); 
+
 };
 
 
-
 exports.calculate = function(req, res){
-
 
   var Rate = req.body.Rate/100;
   var TaxRate = req.body.TaxRate/100;
@@ -30,6 +196,18 @@ exports.calculate = function(req, res){
   var Commission = req.body.Commission/100;
   var RentalIncome = req.body.RentalIncome/1.0;
   var CapitalGainTax = 0.25;
+
+  var Bedrooms = req.body.Bedrooms;
+  var Bathrooms =req.body.Bathrooms;
+  var PropertySize = req.body.PropertySize;
+  var LotSize = req.body.LotSize;
+  var YearBuilt = req.body.YearBuilt;
+  var Zestimate = req.body.Zestimate;
+  var ShowPropertyData = req.body.ShowPropertyData; 
+  var MakeADeal = req.body.MakeADeal; 
+  var BeCareful = req.body.BeCareful;
+  //var PropertyReset = req.body.PropertyReset;
+  //var PropertyInput = req.body.PropertyInput;
 
   var DownPayment = DownPay * PurchasePrice;
   var Loan = PurchasePrice - DownPayment;
@@ -61,6 +239,19 @@ exports.calculate = function(req, res){
   var NetProfit = (SoldPrice*(1-Commission)-Closing-TLC-PrincipalRemaining-TotalContributionWithTaxSaving*Math.pow((1+RRR), Year))*(1-CapitalGainTax);
   var AnnualReturn = (Math.pow(((NetProfit + TotalContributionWithTaxSaving)/TotalContributionWithTaxSaving), (1/Year))-1)*100;
   var EffectiveReturn = AnnualReturn - RRR;
+  var ReturnStyle = "";
+
+  if(EffectiveReturn < 0){
+    ReturnStyle = "bad";
+    BeCareful = "show";
+    MakeADeal = "hide";
+  }
+  else if(EffectiveReturn > 15)
+  {
+    ReturnStyle = "good";
+    MakeADeal = "show";
+    BeCareful = "hide";
+  }
 
   var Test = MonthlyMortgage*1.0 + HOA*1.0;
   res.render('index', {DownPayment : accounting.formatNumber(DownPayment,0,","),
@@ -78,7 +269,7 @@ exports.calculate = function(req, res){
                        RentalIncome : RentalIncome,
                        HOA : HOA,
                        Loan : accounting.formatNumber(Loan,0,","),
-                       status : "show-table",
+                       Status : "show-table",
                        AnnualHOA : accounting.formatNumber(AnnualHOA,0,","),
                        MonthlyMortgage : accounting.formatNumber(MonthlyMortgage,0,","),
                        AnnualMortgage : accounting.formatNumber(AnnualMortgage,0,","),
@@ -103,7 +294,19 @@ exports.calculate = function(req, res){
                        TotalContributionWithTaxSaving : accounting.formatNumber(TotalContributionWithTaxSaving,0,","),
                        NetProfit : accounting.formatNumber(NetProfit,0,","),
                        AnnualReturn : accounting.formatNumber(AnnualReturn,2,","),
-                       EffectiveReturn : accounting.formatNumber(EffectiveReturn,2,",")
+                       EffectiveReturn : accounting.formatNumber(EffectiveReturn,2,","),
+                       ReturnStyle : ReturnStyle,
+                       Bedrooms : Bedrooms,
+                       Bathrooms : Bathrooms,
+                       PropertySize : accounting.formatNumber(PropertySize,0,","),
+                       LotSize : accounting.formatNumber(LotSize,0,","),
+                       YearBuilt : YearBuilt,
+                       Zestimate : accounting.formatNumber(Zestimate,0,","),
+                       ShowPropertyData : ShowPropertyData,
+                       PropertyReset : "show",
+                       PropertyInput : "hide",
+                       MakeADeal : MakeADeal,
+                       BeCareful : BeCareful
                      });
 };
 
