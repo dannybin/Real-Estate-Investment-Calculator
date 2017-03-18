@@ -64,8 +64,47 @@ exports.fetch = function(req, res){
       {
         return getDetail("No property data");
       }
+
+      if(xpath.select("//address", xml).length){
+        Address = xpath.select("//address", xml)[0].firstChild.data;
+      }
+      if(xpath.select("//zpid", xml).length){
+        Zpid = xpath.select("//zpid", xml)[0].firstChild.data;
+      }
+      if(xpath.select("//yearBuilt", xml).length){
+        YearBuilt = xpath.select("//yearBuilt", xml)[0].firstChild.data;
+      }
+      if(xpath.select("//lotSizeSqFt", xml).length){
+        LotSize = xpath.select("//lotSizeSqFt", xml)[0].firstChild.data;
+      }
+      if(xpath.select("//finishedSqFt", xml).length){
+        PropertySize = xpath.select("//finishedSqFt", xml)[0].firstChild.data;
+      }
+      if(xpath.select("//bedrooms", xml).length){
+        Bedrooms = xpath.select("//bedrooms", xml)[0].firstChild.data;
+      }
+      if(xpath.select("//bathrooms", xml).length){
+        Bathrooms = xpath.select("//bathrooms", xml)[0].firstChild.data;
+      }
+      if(xpath.select("//lastSoldDate", xml).length){
+        LastSoldDate = xpath.select("//lastSoldDate", xml)[0].firstChild.data;
+      }
+      if(xpath.select("//lastSoldPrice", xml).length){
+        LastSoldPrice = xpath.select("//lastSoldPrice", xml)[0].firstChild.data;
+      }
+      if(xpath.select("//amount", xml).length){
+        Zestimate = xpath.select("//amount", xml)[0].firstChild.data;
+      }
+      if(xpath.select("//low", xml).length){
+        LowZestimate = xpath.select("//low", xml)[0].firstChild.data;
+      }
+      if(xpath.select("//high", xml).length){
+        HighZestimate = xpath.select("//high", xml)[0].firstChild.data;
+      }
+
+/*
       Address = xpath.select("//address", xml)[0].firstChild.data;
-      Zpid = xpath.select("//zpid", xml)[0].firstChild.data;;
+      Zpid = xpath.select("//zpid", xml)[0].firstChild.data;
       YearBuilt = xpath.select("//yearBuilt", xml)[0].firstChild.data;
       LotSize = xpath.select("//lotSizeSqFt", xml)[0].firstChild.data;
       PropertySize = xpath.select("//finishedSqFt", xml)[0].firstChild.data;
@@ -76,7 +115,7 @@ exports.fetch = function(req, res){
       Zestimate = xpath.select("//amount", xml)[0].firstChild.data;
       LowZestimate = xpath.select("//low", xml)[0].firstChild.data;
       HighZestimate = xpath.select("//high", xml)[0].firstChild.data;
-
+*/
       getDetail();
     },
     function (propertyDetail){
